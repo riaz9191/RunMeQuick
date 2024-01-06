@@ -34,9 +34,9 @@ const Navbar = () => {
       <li>
         <NavLink
           className={({ isActive }) => (isActive ? "active" : "default")}
-          to={"/createRepositories"}
+          to={"/codeExecution"}
         >
-          Create Repository
+          Code Execution
         </NavLink>
       </li>
         <li>

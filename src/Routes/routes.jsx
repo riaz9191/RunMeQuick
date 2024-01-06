@@ -3,6 +3,7 @@ import Main from "../Layout/Main";
 import Home from "../Pages/Home/Home";
 import Login from "../Pages/Shared/Login";
 import SignUp from "../Pages/Shared/SignUp";
+import CodeExecution from "../Pages/CodeExecution/CodeExecution";
 
 
 export const router = createBrowserRouter([
@@ -21,6 +22,10 @@ export const router = createBrowserRouter([
       {
         path: "/signup",
         element: <SignUp></SignUp>,
+      },
+      {
+        path: "/codeExecution",
+        element: <CodeExecution/>,
       },
       
     ]
