@@ -1,11 +1,11 @@
 // CodeExecution.js
-import { useState, useContext } from 'react';
-import { AuthContext } from '../../Provider/AuthProvider';
+import { useState, useContext } from "react";
+import { AuthContext } from "../../Provider/AuthProvider";
 
 const CodeExecution = () => {
   const { user } = useContext(AuthContext);
-  const [code, setCode] = useState('');
-  const [runtime, setRuntime] = useState('');
+  const [code, setCode] = useState("");
+  const [runtime, setRuntime] = useState("");
   const [executionStatus, setExecutionStatus] = useState(null);
   const [executionResult, setExecutionResult] = useState(null);
 
@@ -14,38 +14,42 @@ const CodeExecution = () => {
       return;
     }
 
-    setExecutionStatus('Queued');
+    setExecutionStatus("Queued");
     setExecutionResult(null);
 
     try {
-      const response = await fetch('/api/execute', {
-        method: 'POST',
+      const response = await fetch("http://localhost:5000/api/execute", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           code,
           runtime,
         }),
       });
+      console.log(response);
 
       const result = await response.json();
+      console.log(result);
 
       setExecutionStatus(result.status);
 
-      if (result.status === 'Execution Complete') {
+      if (result.status === "Execution Complete") {
         setExecutionResult(result.result);
       }
     } catch (error) {
-      console.error('Error executing code:', error);
-      setExecutionStatus('Error');
+      console.error("Error executing code:", error);
+      setExecutionStatus("Error");
     }
   };
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4 mt-16 text-white text-center">--- Code Execution ---</h1>
-      <hr className='my-4 max-w-2xl mx-auto' />
+      <h1 className="text-3xl font-bold mb-4 mt-16 text-white text-center">
+        --- Code Execution ---
+      </h1>
+      <hr className="my-4 max-w-2xl mx-auto" />
       {user ? (
         <div className="space-y-4">
           <textarea
@@ -72,17 +76,36 @@ const CodeExecution = () => {
           >
             Execute Code
           </button>
-          <div className='text-white'>
+          <div className="text-white">
             <strong>Status:</strong> {executionStatus}
           </div>
           {executionResult && (
-            <div>
-              <strong>Result:</strong> {executionResult}
+            <div className="text-white">
+              {/* <strong>Result:</strong> {executionResult} */}
+              
+
+              <label
+                for="message"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+               Result:
+              </label>
+              <textarea
+                id="message"
+                rows="10"
+                col="10"
+                disabled
+                placeholder={executionResult}
+                className="block p-2.5 w-full text-sm text-gray-900  border focus:ring-blue-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500  border-green-500 rounded-xl bg-slate-900"
+                
+              ></textarea>
             </div>
           )}
         </div>
       ) : (
-        <p className="text-center text-white border-2 max-w-xl mx-auto border-blue-600">Please log in to execute code.</p>
+        <p className="text-center text-white border-2 max-w-xl mx-auto border-blue-600">
+          Please log in to execute code.
+        </p>
       )}
     </div>
   );

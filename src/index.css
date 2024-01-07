@@ -242,3 +242,12 @@ button:hover .play {
     transform: rotate(50deg) scale(1);
   }
 }
+
+
+
+
+/* code  */
+.code{
+  width: 584px;
+  height: 261px;
+}
