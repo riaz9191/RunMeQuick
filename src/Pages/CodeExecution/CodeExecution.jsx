@@ -1,6 +1,7 @@
 import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../../Provider/AuthProvider";
-
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const CodeExecution = () => {
   const { user } = useContext(AuthContext);
   const [code, setCode] = useState("");
@@ -102,7 +103,7 @@ const CodeExecution = () => {
             <option value="javascript">JavaScript</option>
             <option value="go">Go</option>
             <option value="c++">C++</option>
-            <option value="php">Php</option>
+            <option value="php">PHP</option>
           </select>
           <div className="flex gap-4">
             <button
