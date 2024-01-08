@@ -92,13 +92,11 @@ const CodeExecution = () => {
       // Abort the ongoing fetch request
       fetchController.abort();
       setIsButtonDisabled(false)
-      setCountdown(null)
     } else {
       // Handle child process termination logic here (if applicable)
     }
-
     setExecutionStatus("Cancelled");
-    setIsButtonDisabled(false);
+    setIsButtonDisabled(true);
     setCancelBtnVisible(false);
     setCountdown(null);
   };
