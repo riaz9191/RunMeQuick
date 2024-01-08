@@ -1,7 +1,5 @@
 import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../../Provider/AuthProvider";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const CodeExecution = () => {
   const { user } = useContext(AuthContext);
@@ -11,7 +9,6 @@ const CodeExecution = () => {
   const [executionResult, setExecutionResult] = useState(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [countdown, setCountdown] = useState(null);
-  
 
   const executeCode = async () => {
     if (!code || !runtime || isButtonDisabled) {
@@ -42,17 +39,12 @@ const CodeExecution = () => {
 
       if (result.status === "Execution Complete") {
         setExecutionResult(result.result);
-        if (!result.result) {
-         
-          toast.error("Something went wrong. Please try again.");
-        }
       }
     } catch (error) {
       console.error("Error executing code:", error);
       setExecutionStatus("Something is Wrong,Try Again!");
-      toast.error("Something went wrong. Please try again.");
     } finally {
-      
+      // Enable the button after a cooldown period (5 seconds in this example)
       const cooldownDuration = 5;
       setCountdown(cooldownDuration);
 
@@ -110,7 +102,7 @@ const CodeExecution = () => {
             <option value="javascript">JavaScript</option>
             <option value="go">Go</option>
             <option value="c++">C++</option>
-            <option value="php">PHP</option>
+            <option value="php">Php</option>
           </select>
           <div className="flex gap-4">
             <button
