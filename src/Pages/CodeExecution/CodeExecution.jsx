@@ -24,7 +24,6 @@ const CodeExecution = () => {
     setIsButtonDisabled(true);
     setCancelBtnVisible(true);
 
-
     const controller = new AbortController();
     setFetchController(controller);
 
@@ -53,16 +52,21 @@ const CodeExecution = () => {
       if (result.status === "Execution Complete") {
         setExecutionResult(result.result);
         if (!result.result) {
-         
           toast.error("Something went wrong. Please try again.");
         }
       }
     } catch (error) {
-      console.error("Error executing code:", error);
-      setExecutionStatus("Something is Wrong,Try Again!");
-      toast.error("Something went wrong. Please try again.");
+      if (error.name === "AbortError") {
+        setExecutionStatus("Cancelled");
+      } else {
+        console.error("Error executing code:", error);
+        setExecutionStatus("Something is Wrong, Try Again!");
+        toast.error("Something went wrong. Please try again.");
+      }
     } finally {
-      
+      setCancelBtnVisible(false);
+      setFetchController(null);
+
       const cooldownDuration = 5;
       setCountdown(cooldownDuration);
 
@@ -82,6 +86,21 @@ const CodeExecution = () => {
         setCountdown(null);
       }, cooldownDuration * 1000);
     }
+  };
+  const cancelExecution = () => {
+    if (fetchController) {
+      // Abort the ongoing fetch request
+      fetchController.abort();
+      setIsButtonDisabled(false)
+      setCountdown(null)
+    } else {
+      // Handle child process termination logic here (if applicable)
+    }
+
+    setExecutionStatus("Cancelled");
+    setIsButtonDisabled(false);
+    setCancelBtnVisible(false);
+    setCountdown(null);
   };
   useEffect(() => {
     if (countdown === null) {
@@ -132,6 +151,14 @@ const CodeExecution = () => {
             >
               Execute Code
             </button>
+            {cancelBtnVisible && (
+              <button
+                onClick={cancelExecution}
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 focus:outline-none focus:shadow-outline-red"
+              >
+                Cancel
+              </button>
+            )}
             {countdown !== null && (
               <div className="text-gray-500 text-sm mt-2 flex gap-2 items-center justify-center">
                 <div>
