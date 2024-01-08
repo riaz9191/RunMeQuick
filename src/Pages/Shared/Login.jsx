@@ -27,7 +27,7 @@ const Login = () => {
       const { email, password } = formData;
   
       try {
-        // Call the loginNewUser function from AuthContext
+       
         await loginNewUser(email, password);
         setFormData({ email: "", password: "" });
   
@@ -55,18 +55,15 @@ const Login = () => {
         navigate(from);
       } catch (error) {
         console.error("Login failed", alert(error.message));
-        // Handle login error (display error message, etc.)
       }
     };
   
     const handleGoogleLogin = async () => {
       try {
-        // Call the googleLogin function from AuthContext
         await googleLogin();
         navigate(from);
       } catch (error) {
         console.error("Google login failed", error.message);
-        // Handle login error (display error message, etc.)
       }
     };
   

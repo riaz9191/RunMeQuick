@@ -29,7 +29,6 @@ const SignUp = () => {
     const { username, email, password } = formData;
 
     try {
-      // Call the registerNewUser function from AuthContext
       await registerNewUser(email, password);
       setFormData({ username: "", email: "", password: "" });
 
@@ -56,9 +55,7 @@ const SignUp = () => {
       });
 
       navigate(from);
-      // You can optionally update the user's display name here using updateProfileData
-      // await updateProfileData(username, null);
-      // Redirect or perform additional actions after successful registration
+  
     } catch (error) {
       console.error("Registration failed",  toast.warn(error.message), {
         position: "top-right",
@@ -75,12 +72,10 @@ const SignUp = () => {
   };
   const handleGoogleLogin = async () => {
     try {
-      // Call the signInWithGoogle function from AuthContext
       await googleLogin();
       navigate(from);
     } catch (error) {
       console.error("Google login failed", error.message);
-      // Handle login error (display error message, etc.)
     }
   };
   return (

@@ -1,6 +1,7 @@
-// CodeExecution.js
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../../Provider/AuthProvider";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CodeExecution = () => {
   const { user } = useContext(AuthContext);
@@ -8,14 +9,23 @@ const CodeExecution = () => {
   const [runtime, setRuntime] = useState("");
   const [executionStatus, setExecutionStatus] = useState(null);
   const [executionResult, setExecutionResult] = useState(null);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [countdown, setCountdown] = useState(null);
+  const [cancelBtnVisible, setCancelBtnVisible] = useState(false);
+  const [fetchController, setFetchController] = useState(null);
 
   const executeCode = async () => {
-    if (!code || !runtime) {
+    if (!code || !runtime || isButtonDisabled) {
       return;
     }
 
     setExecutionStatus("Queued");
     setExecutionResult(null);
+    setIsButtonDisabled(true);
+    setCancelBtnVisible(true);
+
+    const controller = new AbortController();
+    setFetchController(controller);
 
     try {
       const response = await fetch("http://localhost:5000/api/execute", {
@@ -27,8 +37,12 @@ const CodeExecution = () => {
           code,
           runtime,
         }),
+        signal: controller.signal,
       });
       console.log(response);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
       const result = await response.json();
       console.log(result);
@@ -37,12 +51,68 @@ const CodeExecution = () => {
 
       if (result.status === "Execution Complete") {
         setExecutionResult(result.result);
+        if (!result.result) {
+          toast.error("Something went wrong. Please try again.");
+        }
       }
     } catch (error) {
-      console.error("Error executing code:", error);
-      setExecutionStatus("Error");
+      if (error.name === "AbortError") {
+        setExecutionStatus("Cancelled");
+      } else {
+        console.error("Error executing code:", error);
+        setExecutionStatus("Something is Wrong, Try Again!");
+        toast.error("Something went wrong. Please try again.");
+      }
+    } finally {
+      setCancelBtnVisible(false);
+      setFetchController(null);
+
+      const cooldownDuration = 5;
+      setCountdown(cooldownDuration);
+
+      const intervalId = setInterval(() => {
+        setCountdown((prevCountdown) => {
+          if (prevCountdown === 1) {
+            setIsButtonDisabled(false);
+            return null;
+          }
+          return prevCountdown - 1;
+        });
+      }, 1000);
+
+      setTimeout(() => {
+        clearInterval(intervalId);
+        setIsButtonDisabled(false);
+        setCountdown(null);
+      }, cooldownDuration * 1000);
     }
   };
+  const cancelExecution = () => {
+    if (fetchController) {
+      // Abort the ongoing fetch request
+      fetchController.abort();
+      setIsButtonDisabled(false)
+      setCountdown(null)
+    } else {
+      // Handle child process termination logic here (if applicable)
+    }
+
+    setExecutionStatus("Cancelled");
+    setIsButtonDisabled(false);
+    setCancelBtnVisible(false);
+    setCountdown(null);
+  };
+  useEffect(() => {
+    if (countdown === null) {
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      setCountdown((prevCountdown) => prevCountdown - 1);
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [countdown]);
 
   return (
     <div className="container mx-auto p-4">
@@ -69,35 +139,56 @@ const CodeExecution = () => {
             <option value="javascript">JavaScript</option>
             <option value="go">Go</option>
             <option value="c++">C++</option>
+            <option value="php">PHP</option>
           </select>
-          <button
-            onClick={executeCode}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:shadow-outline-blue"
-          >
-            Execute Code
-          </button>
+          <div className="flex gap-4">
+            <button
+              onClick={executeCode}
+              className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:shadow-outline-blue ${
+                isButtonDisabled ? "cursor-not-allowed opacity-50" : ""
+              }`}
+              disabled={isButtonDisabled}
+            >
+              Execute Code
+            </button>
+            {cancelBtnVisible && (
+              <button
+                onClick={cancelExecution}
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 focus:outline-none focus:shadow-outline-red"
+              >
+                Cancel
+              </button>
+            )}
+            {countdown !== null && (
+              <div className="text-gray-500 text-sm mt-2 flex gap-2 items-center justify-center">
+                <div>
+                  <div className="three-body">
+                    <div className="three-body__dot"></div>
+                    <div className="three-body__dot"></div>
+                    <div className="three-body__dot"></div>
+                  </div>
+                </div>{" "}
+                Cooldown: {countdown}
+              </div>
+            )}
+          </div>
           <div className="text-white">
             <strong>Status:</strong> {executionStatus}
           </div>
           {executionResult && (
             <div className="text-white">
-              {/* <strong>Result:</strong> {executionResult} */}
-              
-
               <label
-                for="message"
+                htmlFor="message"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >
-               Result:
+                Result:
               </label>
               <textarea
                 id="message"
                 rows="10"
-                col="10"
                 disabled
                 placeholder={executionResult}
                 className="block p-2.5 w-full text-sm text-gray-900  border focus:ring-blue-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500  border-green-500 rounded-xl bg-slate-900"
-                
               ></textarea>
             </div>
           )}
