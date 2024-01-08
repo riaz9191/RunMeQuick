@@ -2,6 +2,7 @@ import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../../Provider/AuthProvider";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 const CodeExecution = () => {
   const { user } = useContext(AuthContext);
   const [code, setCode] = useState("");
@@ -10,6 +11,7 @@ const CodeExecution = () => {
   const [executionResult, setExecutionResult] = useState(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [countdown, setCountdown] = useState(null);
+  
 
   const executeCode = async () => {
     if (!code || !runtime || isButtonDisabled) {
@@ -40,12 +42,17 @@ const CodeExecution = () => {
 
       if (result.status === "Execution Complete") {
         setExecutionResult(result.result);
+        if (!result.result) {
+         
+          toast.error("Something went wrong. Please try again.");
+        }
       }
     } catch (error) {
       console.error("Error executing code:", error);
       setExecutionStatus("Something is Wrong,Try Again!");
+      toast.error("Something went wrong. Please try again.");
     } finally {
-      // Enable the button after a cooldown period (5 seconds in this example)
+      
       const cooldownDuration = 5;
       setCountdown(cooldownDuration);
 
