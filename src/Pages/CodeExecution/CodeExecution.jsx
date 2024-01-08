@@ -11,8 +11,6 @@ const CodeExecution = () => {
   const [executionResult, setExecutionResult] = useState(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [countdown, setCountdown] = useState(null);
-  const [cancelBtnVisible, setCancelBtnVisible] = useState(false);
-  const [fetchController, setFetchController] = useState(null);
 
   const executeCode = async () => {
     if (!code || !runtime || isButtonDisabled) {
@@ -22,10 +20,6 @@ const CodeExecution = () => {
     setExecutionStatus("Queued");
     setExecutionResult(null);
     setIsButtonDisabled(true);
-    setCancelBtnVisible(true);
-
-    const controller = new AbortController();
-    setFetchController(controller);
 
     try {
       const response = await fetch("http://localhost:5000/api/execute", {
@@ -37,12 +31,8 @@ const CodeExecution = () => {
           code,
           runtime,
         }),
-        signal: controller.signal,
       });
       console.log(response);
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
 
       const result = await response.json();
       console.log(result);
@@ -52,21 +42,16 @@ const CodeExecution = () => {
       if (result.status === "Execution Complete") {
         setExecutionResult(result.result);
         if (!result.result) {
+         
           toast.error("Something went wrong. Please try again.");
         }
       }
     } catch (error) {
-      if (error.name === "AbortError") {
-        setExecutionStatus("Cancelled");
-      } else {
-        console.error("Error executing code:", error);
-        setExecutionStatus("Something is Wrong, Try Again!");
-        toast.error("Something went wrong. Please try again.");
-      }
+      console.error("Error executing code:", error);
+      setExecutionStatus("Something is Wrong,Try Again!");
+      toast.error("Something went wrong. Please try again.");
     } finally {
-      setCancelBtnVisible(false);
-      setFetchController(null);
-
+      // Enable the button after a cooldown period (5 seconds in this example)
       const cooldownDuration = 5;
       setCountdown(cooldownDuration);
 
@@ -86,21 +71,6 @@ const CodeExecution = () => {
         setCountdown(null);
       }, cooldownDuration * 1000);
     }
-  };
-  const cancelExecution = () => {
-    if (fetchController) {
-      // Abort the ongoing fetch request
-      fetchController.abort();
-      setIsButtonDisabled(false)
-      setCountdown(null)
-    } else {
-      // Handle child process termination logic here (if applicable)
-    }
-
-    setExecutionStatus("Cancelled");
-    setIsButtonDisabled(false);
-    setCancelBtnVisible(false);
-    setCountdown(null);
   };
   useEffect(() => {
     if (countdown === null) {
@@ -151,14 +121,6 @@ const CodeExecution = () => {
             >
               Execute Code
             </button>
-            {cancelBtnVisible && (
-              <button
-                onClick={cancelExecution}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 focus:outline-none focus:shadow-outline-red"
-              >
-                Cancel
-              </button>
-            )}
             {countdown !== null && (
               <div className="text-gray-500 text-sm mt-2 flex gap-2 items-center justify-center">
                 <div>
