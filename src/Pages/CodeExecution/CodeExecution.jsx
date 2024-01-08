@@ -11,7 +11,8 @@ const CodeExecution = () => {
   const [executionResult, setExecutionResult] = useState(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [countdown, setCountdown] = useState(null);
-  
+  const [cancelBtnVisible, setCancelBtnVisible] = useState(false);
+  const [fetchController, setFetchController] = useState(null);
 
   const executeCode = async () => {
     if (!code || !runtime || isButtonDisabled) {
@@ -21,6 +22,11 @@ const CodeExecution = () => {
     setExecutionStatus("Queued");
     setExecutionResult(null);
     setIsButtonDisabled(true);
+    setCancelBtnVisible(true);
+
+
+    const controller = new AbortController();
+    setFetchController(controller);
 
     try {
       const response = await fetch("http://localhost:5000/api/execute", {
@@ -32,8 +38,12 @@ const CodeExecution = () => {
           code,
           runtime,
         }),
+        signal: controller.signal,
       });
       console.log(response);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
       const result = await response.json();
       console.log(result);
