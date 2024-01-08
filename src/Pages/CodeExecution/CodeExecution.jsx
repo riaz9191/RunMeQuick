@@ -11,6 +11,7 @@ const CodeExecution = () => {
   const [executionResult, setExecutionResult] = useState(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [countdown, setCountdown] = useState(null);
+  
 
   const executeCode = async () => {
     if (!code || !runtime || isButtonDisabled) {
@@ -51,7 +52,7 @@ const CodeExecution = () => {
       setExecutionStatus("Something is Wrong,Try Again!");
       toast.error("Something went wrong. Please try again.");
     } finally {
-      // Enable the button after a cooldown period (5 seconds in this example)
+      
       const cooldownDuration = 5;
       setCountdown(cooldownDuration);
 
