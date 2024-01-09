@@ -350,3 +350,8 @@ button:hover .play {
   }
  }
  
+
+ .monaco-editor {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}

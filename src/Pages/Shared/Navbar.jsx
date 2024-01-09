@@ -40,12 +40,12 @@ const Navbar = () => {
         </NavLink>
       </li>
         <li>
-          {/* <NavLink
+          <NavLink
             className={({ isActive }) => (isActive ? "active" : "default")}
-            to={"/repositories"}
+            to={"/previousExecutions"}
           >
-            Repository List
-          </NavLink> */}
+            Previous Executions
+          </NavLink>
         </li>
       {user?.email ? (
         <ul className="lg:flex">

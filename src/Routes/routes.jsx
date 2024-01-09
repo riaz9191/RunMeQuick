@@ -4,6 +4,7 @@ import Home from "../Pages/Home/Home";
 import Login from "../Pages/Shared/Login";
 import SignUp from "../Pages/Shared/SignUp";
 import CodeExecution from "../Pages/CodeExecution/CodeExecution";
+import PreviousExecutions from "../Pages/CodeExecution/PreviousExecutions";
 
 
 export const router = createBrowserRouter([
@@ -26,6 +27,10 @@ export const router = createBrowserRouter([
       {
         path: "/codeExecution",
         element: <CodeExecution/>,
+      },
+      {
+        path: "/previousExecutions",
+        element: <PreviousExecutions/>,
       },
       
     ]
