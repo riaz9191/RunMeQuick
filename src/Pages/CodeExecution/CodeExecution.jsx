@@ -5,12 +5,8 @@ import { AuthContext } from "../../Provider/AuthProvider";
 import MonacoEditor from "react-monaco-editor";
 import { Link } from "react-router-dom";
 
-
-
-
 const CodeExecution = () => {
   const { user } = useContext(AuthContext);
-  console.log(u)
   const [code, setCode] = useState("");
   const [runtime, setRuntime] = useState("");
   const [executionStatus, setExecutionStatus] = useState(null);
@@ -21,29 +17,18 @@ const CodeExecution = () => {
   const [fetchController, setFetchController] = useState(null);
   const userEmail = user?.email || "";
 
-
-
   const executeCode = async () => {
     if (!code || !runtime || isButtonDisabled) {
       return;
     }
-
-
-
 
     setExecutionStatus("Queued");
     setExecutionResult(null);
     setIsButtonDisabled(true);
     setCancelBtnVisible(true);
 
-
-
-
     const controller = new AbortController();
     setFetchController(controller);
-
-
-
 
     try {
       const response = await fetch("http://localhost:5000/api/execute", {
@@ -54,8 +39,8 @@ const CodeExecution = () => {
         body: JSON.stringify({
           code,
           runtime,
-          userEmail
-
+          userEmail,
+          createdAt: new Date().toLocaleString("en-GB", { dateStyle: "short", timeStyle: "short" }),
         }),
         signal: controller.signal,
       });
@@ -64,19 +49,10 @@ const CodeExecution = () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-
-
-
       const result = await response.json();
       console.log(result);
 
-
-
-
       setExecutionStatus(result.status);
-
-
-
 
       if (result.status === "Execution Complete") {
         setExecutionResult(result.result);
@@ -96,14 +72,8 @@ const CodeExecution = () => {
       setCancelBtnVisible(false);
       setFetchController(null);
 
-
-
-
       const cooldownDuration = 5;
       setCountdown(cooldownDuration);
-
-
-
 
       const intervalId = setInterval(() => {
         setCountdown((prevCountdown) => {
@@ -114,9 +84,6 @@ const CodeExecution = () => {
           return prevCountdown - 0;
         });
       }, 1000);
-
-
-
 
       setTimeout(() => {
         clearInterval(intervalId);
@@ -143,26 +110,17 @@ const CodeExecution = () => {
       return;
     }
 
-
-
-
     const timeoutId = setTimeout(() => {
       setCountdown((prevCountdown) => prevCountdown - 1);
     }, 1000);
 
-
-
-
     return () => clearTimeout(timeoutId);
   }, [countdown]);
-
-
-
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-4 mt-16 text-white text-center">
-         Code Execution
+        Code Execution
       </h1>
       <hr className="my-4 max-w-2xl mx-auto" />
       {user ? (
@@ -253,7 +211,12 @@ const CodeExecution = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          <h1 className="text-red-800 text-center text-3xl font-bold font-mono"><span className="hover:underline hover:text-red-600 hover:transition duration-500"><Link to='/login'>Login</Link></span> to save your progress</h1>
+          <h1 className="text-red-800 text-center text-3xl font-bold font-mono">
+            <span className="hover:underline hover:text-red-600 hover:transition duration-500">
+              <Link to="/login">Login</Link>
+            </span>{" "}
+            to save your progress
+          </h1>
           <MonacoEditor
             width="100%"
             height="300"
@@ -338,13 +301,9 @@ const CodeExecution = () => {
             </div>
           )}
         </div>
-       
       )}
     </div>
   );
 };
-
-
-
 
 export default CodeExecution;
