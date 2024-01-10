@@ -46,7 +46,7 @@ RunMeQuick is a blazing-fast code execution platform that lets you run and test 
 1. **Sign In:**
 - Log in to save and manage your code snippets.
 2. **Choose Language:**
-= Select your preferred programming language.
+- Select your preferred programming language.
 3. **Write Code:**
 - Write or paste your code into the editor.
 4. **Execute Code:**
@@ -63,10 +63,10 @@ RunMeQuick is a blazing-fast code execution platform that lets you run and test 
 - Monaco Editor
 
 **Contributions Welcome**
-We welcome contributions! Feel free to fork the repository and submit pull requests.
+- We welcome contributions! Feel free to fork the repository and submit pull requests.
 
 **License**
-This project is licensed under the MIT License.
+- This project is licensed under the MIT License.
 
 <p align="center">
   <a href="https://github.com/riaz9191/runmequick" target="_blank">
