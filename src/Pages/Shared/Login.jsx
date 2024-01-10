@@ -4,14 +4,18 @@ import { AuthContext } from "../../Provider/AuthProvider";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import useTitle from "../../hooks/useTitle";
+import { toast } from "react-toastify";
+
 
 const Login = () => {
     const { loginNewUser, googleLogin } = useContext(AuthContext);
     const location = useLocation();
     const navigate = useNavigate();
+    console.log(location,navigate)
     useTitle("Login");
   
     const from = location.state?.from || "/";
+    console.log(from)
   
     const [formData, setFormData] = useState({
       email: "",
@@ -30,6 +34,7 @@ const Login = () => {
        
         await loginNewUser(email, password);
         setFormData({ email: "", password: "" });
+        navigate(from);
   
         let timerInterval;
         Swal.fire({
@@ -54,7 +59,17 @@ const Login = () => {
   
         navigate(from);
       } catch (error) {
-        console.error("Login failed", alert(error.message));
+        console.error("Login failed",toast.warn(error.message), {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        window.location.reload(true);
       }
     };
   
@@ -68,7 +83,7 @@ const Login = () => {
     };
   
   return (
-    <div className="py-16">
+    <div className="py-20">
       <div className="lg:flex lg:h-screen">
         <div className="w-full bg-gray-100 lg:w-1/2 flex items-center justify-center">
           <div className="max-w-md w-full p-6">

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const Banner = () => {
   const [state, setState] = useState(false);
 
-  // Replace javascript:void(0) paths with your paths
+
 
   useEffect(() => {
     document.onclick = (e) => {
@@ -36,18 +36,22 @@ const Banner = () => {
         <div className="relative z-10 max-w-screen-xl mx-auto px-4 py-28 lg:py-52 md:px-8">
           <div className="space-y-5 max-w-4xl mx-auto text-center">
             <h2 className="text-4xl text-[#efefef] font-extrabold mx-auto md:text-5xl">
-              Collaborate and code with the community on{" "}
-              <span className="bg-gradient-to-r from-[#ddae13] to-[#f25353] bg-clip-text text-transparent">RunMeQuick</span>{" "}
+              Run Your Code on{" "}
+              <span className="bg-gradient-to-r from-[#0DFFFE] via-[#f48d8d] to-[#d38cfa] bg-clip-text text-transparent transition-all duration-500">
+                RunMeQuick
+              </span>{" "}
             </h2>
             <p className="max-w-2xl mx-auto text-gray-400">
-              Connect, create, and contribute to open-source projects. GitFormed
-              is your platform for seamless collaboration.
+              Dive into coding, connect with your account. <span className="bg-gradient-to-r from-[#0DFFFE] via-[#f48d8d] to-[#d38cfa] bg-clip-text text-transparent transition-all duration-500">
+                RunMeQuick
+              </span>{" "} is your free coding platform for
+              seamless and coding adventures.
             </p>
             <form
               onSubmit={(e) => e.preventDefault()}
               className="justify-center items-center gap-x-3 sm:flex"
             >
-              <Link to="/login">
+              <Link to="/codeExecution">
                 <button className="flex items-center justify-center gap-x-2 py-2.5 px-4 mt-3 w-full text-sm text-white font-medium bg-sky-500 hover:bg-sky-400 active:bg-sky-600 duration-150 rounded-lg sm:mt-0 sm:w-auto">
                   Get started
                   <svg

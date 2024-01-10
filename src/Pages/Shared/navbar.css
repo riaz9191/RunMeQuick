@@ -1,59 +1,225 @@
+.Btn {
+  width: 140px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(to right,#77530a,#ffd277,#77530a,#77530a,#ffd277,#77530a);
+  background-size: 250%;
+  background-position: left;
+  color: #ffd277;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition-duration: 1s;
+  overflow: hidden;
+}
 
-.login {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 0 10px;
-    color: black;
-    text-shadow: 1px 2px rgb(116, 116, 116);
-    text-transform: uppercase;
-    cursor: pointer;
-    border: solid 2px black;
-    letter-spacing: 1px;
-    font-weight: 600;
-    font-size: 17px;
-    background-color: hsl(49deg 98% 60%);
-    border-radius: 50px;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.5s ease;
-  }
-  
-  .login:active {
-    transform: scale(0.9);
-    transition: all 100ms ease;
-  }
-  
-  .login svg {
-    transition: all 0.5s ease;
-    z-index: 2;
-  }
-  
-  .play {
-    transition: all 0.5s ease;
-    transition-delay: 300ms;
-  }
-  
-  .login:hover svg {
-    transform: scale(3) translate(50%);
-  }
-  
-  .now {
-    position: absolute;
-    left: 0;
-    transform: translateX(-100%);
-    transition: all 0.5s ease;
-    z-index: 2;
-  }
-  
-  .login:hover .now {
-    transform: translateX(10px);
-    transition-delay: 300ms;
-  }
-  
-  .login:hover .play {
-    transform: translateX(200%);
-    transition-delay: 300ms;
-  }
-  
+.Btn::before {
+  position: absolute;
+  content: "Logout";
+  color: #ffd277;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 97%;
+  height: 90%;
+  border-radius: 8px;
+  transition-duration: 1s;
+  background-color: rgba(0, 0, 0, 0.842);
+  background-size: 200%;
+}
+
+.Btn:hover {
+  background-position: right;
+  transition-duration: 1s;
+}
+
+.Btn:hover::before {
+  background-position: right;
+  transition-duration: 1s;
+}
+
+.Btn:active {
+  transform: scale(0.95);
+}
+
+
+/* _______________________ */
+
+.button {
+  height: 50px;
+  width: 150px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s ease-in-out;
+}
+
+.button:hover {
+  box-shadow: .5px .5px 150px #252525;
+}
+
+.type1::after {
+  content: "Sure?:(";
+  height: 50px;
+  width: 150px;
+  background-color: #008080;
+  color: #fff;
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  transform: translateY(50px);
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.5s ease-in-out;
+}
+
+.type1::before {
+  content: "Logout";
+  height: 50px;
+  width: 150px;
+  background-color: #d90a0a;
+  color: #fff;
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  transform: translateY(0px) scale(1.2);
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.5s ease-in-out;
+}
+
+.type1:hover::after {
+  transform: translateY(0) scale(1.2);
+}
+
+.type1:hover::before {
+  transform: translateY(-50px) scale(0) rotate(120deg);
+}
+
+
+
+/* __________________________ */
+.containerz {
+  /* width: 1000px; */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.containerz .zoxy {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 50px;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.containerz .zoxy a {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 15px 15px rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
+  padding: 10px;
+  letter-spacing: 1px;
+  text-decoration: none;
+  overflow: hidden;
+  color: #fff;
+  font-weight: 400px;
+  z-index: 1;
+  transition: 0.5s;
+  backdrop-filter: blur(15px);
+}
+
+.containerz .zoxy:hover a {
+  letter-spacing: 3px;
+}
+
+.containerz .zoxy a::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to left, rgba(255, 255, 255, 0.15), transparent);
+  transform: skewX(45deg) translate(0);
+  transition: 0.5s;
+  filter: blur(0px);
+}
+
+.containerz .zoxy:hover a::before {
+  transform: skewX(45deg) translate(200px);
+}
+
+.containerz .zoxy::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translatex(-50%);
+  bottom: -5px;
+  width: 30px;
+  height: 10px;
+  background: #f00;
+  border-radius: 10px;
+  transition: 0.5s;
+  transition-delay: 0.5;
+}
+
+.containerz .zoxy:hover::before /*lightup button*/ {
+  bottom: 0;
+  height: 50%;
+  width: 80%;
+  border-radius: 30px;
+}
+
+.containerz .zoxy::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translatex(-50%);
+  top: -5px;
+  width: 30px;
+  height: 10px;
+  background: #f00;
+  border-radius: 10px;
+  transition: 0.5s;
+  transition-delay: 0.5;
+}
+
+.containerz .zoxy:hover::after /*lightup button*/ {
+  top: 0;
+  height: 50%;
+  width: 80%;
+  border-radius: 30px;
+}
+
+.containerz .zoxy:nth-child(1)::before,
+.containerz .zoxy:nth-child(1)::after {
+  background: #ff7c18;
+  box-shadow: 0 0 5px #2db2ff, 0 0 15px #2db2ff, 0 0 30px #2db2ff,
+		0 0 60px #2db2ff;
+}

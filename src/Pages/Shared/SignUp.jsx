@@ -58,7 +58,7 @@ const SignUp = () => {
   
     } catch (error) {
       console.error("Registration failed",  toast.warn(error.message), {
-        position: "top-right",
+        position: "bottom-right",
         autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,
@@ -67,7 +67,8 @@ const SignUp = () => {
         progress: undefined,
         theme: "dark",
       });
-      // Handle registration error (display error message, etc.)
+      window.location.reload(true);
+      
     }
   };
   const handleGoogleLogin = async () => {
@@ -79,7 +80,7 @@ const SignUp = () => {
     }
   };
   return (
-    <div className="py-16">
+    <div className="py-20">
       <div className="lg:flex lg:h-screen">
         <div className="hidden lg:flex items-center justify-center flex-1 bg-white text-black">
           <div className="max-w-md text-center">

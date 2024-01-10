@@ -1,9 +1,8 @@
 import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../../Provider/AuthProvider";
-// import { toast } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
 import MonacoEditor from "react-monaco-editor";
 import { Link } from "react-router-dom";
+import useTitle from "../../hooks/useTitle";
 
 const CodeExecution = () => {
   const { user } = useContext(AuthContext);
@@ -15,7 +14,10 @@ const CodeExecution = () => {
   const [countdown, setCountdown] = useState(null);
   const [cancelBtnVisible, setCancelBtnVisible] = useState(false);
   const [fetchController, setFetchController] = useState(null);
+  const [cancelBtnFunction, setCancelBtnFunction] = useState(null);
+
   const userEmail = user?.email || "";
+  useTitle("Code Execution");
 
   const executeCode = async () => {
     if (!code || !runtime || isButtonDisabled) {
@@ -27,38 +29,66 @@ const CodeExecution = () => {
     setIsButtonDisabled(true);
     setCancelBtnVisible(true);
 
+    //a 2-second delay with the option to cancel
+    const delayPromise = new Promise((resolve) => {
+      let cancelTimeout = false;
+      const timeoutId = setTimeout(() => {
+        if (!cancelTimeout) {
+          resolve();
+        }
+      }, 1000);
+
+      // Function to cancel the timeout
+      const cancelTimeoutFunction = () => {
+        clearTimeout(timeoutId);
+        cancelTimeout = true;
+        setCancelBtnVisible(false);
+        setIsButtonDisabled(false);
+        setExecutionStatus("Cancelled");
+      };
+
+      setCancelBtnVisible(true);
+      setCancelBtnFunction(() => cancelTimeoutFunction);
+    });
+
+    // Wait for the delay/cancellation
+    await delayPromise;
+
+    // Continue with the fetch logic
     const controller = new AbortController();
     setFetchController(controller);
 
     try {
-      const response = await fetch("http://localhost:5000/api/execute", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          code,
-          runtime,
-          userEmail,
-          createdAt: new Date().toLocaleString("en-GB", { dateStyle: "short", timeStyle: "short" }),
-        }),
-        signal: controller.signal,
-      });
-      console.log(response);
+      const response = await fetch(
+        "https://runmequick-server.vercel.app/api/execute",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            code,
+            runtime,
+            userEmail,
+            createdAt: new Date().toLocaleString("en-GB", {
+              dateStyle: "short",
+              timeStyle: "short",
+            }),
+          }),
+          signal: controller.signal,
+        }
+      );
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
       const result = await response.json();
-      console.log(result);
 
       setExecutionStatus(result.status);
 
       if (result.status === "Execution Complete") {
         setExecutionResult(result.result);
-        if (!result.result) {
-          // toast.error("Something went wrong. Please try again.");
-        }
       }
     } catch (error) {
       if (error.name === "AbortError") {
@@ -66,7 +96,6 @@ const CodeExecution = () => {
       } else {
         console.error("Error executing code:", error);
         setExecutionStatus("Something is Wrong, Try Again!");
-        // toast.error("Something went wrong. Please try again.");
       }
     } finally {
       setCancelBtnVisible(false);
@@ -92,19 +121,22 @@ const CodeExecution = () => {
       }, cooldownDuration * 1000);
     }
   };
+
   const cancelExecution = () => {
-    if (fetchController) {
-      // Abort the ongoing fetch request
-      fetchController.abort();
-      setIsButtonDisabled(false);
-    } else {
-      // Handle child process termination logic here (if applicable)
+    if (cancelBtnFunction) {
+      cancelBtnFunction();
     }
+    if (fetchController) {
+      fetchController.abort();
+    }
+
+    // Reset state after cancellation
     setExecutionStatus("Cancelled");
-    setIsButtonDisabled(true);
+    setIsButtonDisabled(false);
     setCancelBtnVisible(false);
     setCountdown(null);
   };
+
   useEffect(() => {
     if (countdown === null) {
       return;
@@ -144,28 +176,30 @@ const CodeExecution = () => {
               },
             }}
           />
-          <select
-            value={runtime}
-            onChange={(e) => setRuntime(e.target.value)}
-            className="w-1/4 p-2 border rounded focus:outline-none bg-slate-900 text-white border-blue-800 focus:border-blue-500 "
-          >
-            <option value="">Select Runtime</option>
-            <option value="python">Python</option>
-            <option value="javascript">JavaScript</option>
-            <option value="go">Go</option>
-            <option value="c++">C++</option>
-            <option value="php">PHP</option>
-          </select>
-          <div className="flex gap-4">
-            <button
-              onClick={executeCode}
-              className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:shadow-outline-blue ${
-                isButtonDisabled ? "cursor-not-allowed opacity-50" : ""
-              }`}
-              disabled={isButtonDisabled}
+          <div className="flex gap-4 w-full justify-end mb-4">
+            <select
+              value={runtime}
+              onChange={(e) => setRuntime(e.target.value)}
+              className="w-1/4 p-2 border rounded focus:outline-none bg-slate-900 text-white border-blue-800 focus:border-blue-500 "
             >
-              Execute Code
-            </button>
+              <option value="">Select Runtime</option>
+              <option value="python">Python</option>
+              <option value="javascript">JavaScript</option>
+              <option value="go">Go</option>
+              <option value="c++">C++</option>
+              <option value="php">PHP</option>
+            </select>
+            <div className="flex gap-4">
+              <button
+                onClick={executeCode}
+                className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:shadow-outline-blue ${
+                  isButtonDisabled ? "cursor-not-allowed opacity-50" : ""
+                }`}
+                disabled={isButtonDisabled}
+              >
+                Execute Code
+              </button>
+            </div>
             {cancelBtnVisible && (
               <button
                 onClick={cancelExecution}
